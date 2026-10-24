@@ -2,6 +2,7 @@ import "./globals.css";
 import Link from "next/link";
 import { currentPartner } from "@/lib/api";
 import { ADMIN_ORIGIN, MAIN_SITE, SITE_URL } from "@/lib/config";
+import { OyklaneLogo } from "./components/OyklaneLogo";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -30,10 +31,8 @@ export default async function RootLayout({ children }) {
         <header className="nav">
           <div className="wrap nav__in">
             <Link href="/" className="brand" aria-label="Oyklane Store home">
-              <span className="brand__mark" aria-hidden="true">
-                <span />
-              </span>
-              Oyklane <small>Store</small>
+              <OyklaneLogo height={28} />
+              <small>Store</small>
             </Link>
             <nav className="nav__links" aria-label="Browse">
               <Link href="/themes">Themes</Link>

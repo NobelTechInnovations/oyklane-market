@@ -84,8 +84,6 @@ p { margin: 0; }
 .nav { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: saturate(160%) blur(14px); border-bottom: 1px solid var(--line); }
 .nav__in { height: 64px; display: flex; align-items: center; gap: 24px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; white-space: nowrap; }
-.brand__mark { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #0078d4 0%, #2b9fe6 100%); display: grid; place-items: center; color: #fff; }
-.brand__mark span { width: 11px; height: 11px; border: 2.5px solid #fff; border-radius: 50%; }
 .brand small { font: 600 11px/1 var(--font-body); color: var(--accent); background: var(--accent-soft); padding: 4px 7px; border-radius: 999px; letter-spacing: 0; }
 .nav__links { display: flex; gap: 4px; }
 .nav__links a, .nav__right a.link { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 14px; padding: 8px 12px; border-radius: 8px; }
