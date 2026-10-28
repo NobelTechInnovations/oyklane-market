@@ -3,6 +3,7 @@ import Link from "next/link";
 import { currentPartner } from "@/lib/api";
 import { ADMIN_ORIGIN, MAIN_SITE, SITE_URL } from "@/lib/config";
 import { OyklaneLogo } from "./components/OyklaneLogo";
+import { UtmCapture } from "./components/UtmCapture";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -77,6 +78,7 @@ export default async function RootLayout({ children }) {
             </div>
           </div>
         </footer>
+        <UtmCapture site="market" apiUrl={(process.env.NEXT_PUBLIC_API_URL || "https://api.oyklane.com").replace(/\/$/, "")} />
       </body>
     </html>
   );

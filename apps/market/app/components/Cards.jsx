@@ -83,7 +83,6 @@ export function AppCard({ item }) {
  * (rates, label booking, tracking). Shown as "Coming soon", never installable. */
 export const COMING_SOON_APPS = [
   { slug: "delhivery", name: "Delhivery", color: "#E1251B", text: "Book Delhivery pickups, print labels and track every shipment from your orders page." },
-  { slug: "shiprocket", name: "Shiprocket", color: "#7B3FE4", text: "Compare 25+ couriers' rates through Shiprocket, book in one click and sync tracking." },
 ];
 
 export function ComingSoonCard({ item }) {
