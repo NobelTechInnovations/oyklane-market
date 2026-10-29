@@ -83,6 +83,7 @@ export function AppCard({ item }) {
  * (rates, label booking, tracking). Shown as "Coming soon", never installable. */
 export const COMING_SOON_APPS = [
   { slug: "delhivery", name: "Delhivery", color: "#E1251B", text: "Book Delhivery pickups, print labels and track every shipment from your orders page." },
+  { slug: "ithink-logistics", name: "iThink Logistics", color: "#F26B21", text: "Ship with your own iThink Logistics account: compare couriers, book AWBs, print labels and track from your orders page." },
 ];
 
 export function ComingSoonCard({ item }) {
