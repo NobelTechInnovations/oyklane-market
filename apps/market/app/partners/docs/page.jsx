@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { api } from "@/lib/api";
 
-export const metadata = { title: "Developer docs", description: "How to build, test and sell themes and apps on the Oyklane Store: the flow, environments, theme structure, the app API and review." };
+export const metadata = { title: "Developer guide", description: "How to build, test and sell themes and apps on the Oyklane Store, step by step: setup, the Oyklane CLI, theme structure, the app API, review and getting paid." };
 
 const VERIFY = `// Node: check a webhook from Oyklane
 import crypto from "crypto";
@@ -24,17 +24,35 @@ X-Oyklane-Signature: <hex HMAC-SHA256 of the body>
   "at": "2026-10-08T10:00:00.000Z"
 }`;
 
-const SETUP = `npm install -g @oyklane/cli     # needs Node.js 20 or newer
-oyklane init my-theme
+const INSTALL = `node --version                  # 20 or newer
+npm install -g @oyklane/cli
+oyklane login                   # your developer email and password`;
+
+const THEME_ENV = `OYKLANE_PROJECT_ID=prj_…         # on your dashboard
+OYKLANE_THEME_ID=…                # on your theme's page`;
+
+const APP_ENV = `OYKLANE_PROJECT_ID=prj_…         # on your dashboard
+OYKLANE_APP_ID=…                  # on your app's page
+OYKLANE_APP_SECRET=oyks_…         # on your app's page
+APP_URL=http://localhost:3000
+OYKLANE_TEST_API_KEY=oyk_…        # optional: a key from your own test store`;
+
+const THEME_START = `oyklane init my-theme
 cd my-theme
-oyklane login`;
+# paste your two IDs into .env
+oyklane dev                       # http://localhost:9292`;
 
-const DOTENV = `OYKLANE_PROJECT_ID=prj_…        # on your account
-OYKLANE_THEME_ID=…               # on your theme's page`;
+const THEME_FINISH = `oyklane check                     # the upload rules and the review's safety read
+oyklane package                   # only the theme, to dist/theme.zip`;
 
-const WORK = `oyklane dev       # http://localhost:9292, reloads when you save
-oyklane check     # the upload rules and the review's safety read
-oyklane package   # zips only the theme to dist/theme.zip`;
+const APP_START = `oyklane init my-app --app
+cd my-app
+# paste your IDs and app secret into .env
+npm start                         # your app, in this terminal
+oyklane dev                       # in a second terminal: a test install`;
+
+const APP_FINISH = `oyklane dev --uninstall           # a test uninstall
+oyklane check                     # what your listing still needs for review`;
 
 const LINK = `https://yourapp.com/oyklane?store=my-store&ts=1791450000&signature=<hex>
 // signature = HMAC-SHA256("store=my-store&ts=1791450000", your app secret)
@@ -118,8 +136,9 @@ const ENDPOINTS = [
 
 const TOC = [
   ["flow", "How it works"],
-  ["environments", "Environments"],
-  ["local", "Build on your computer"],
+  ["setup", "Set up"],
+  ["build-theme", "Build a theme"],
+  ["build-app", "Build an app"],
   ["themes", "Themes"],
   ["liquid", "Liquid reference"],
   ["apps", "Apps"],
@@ -130,10 +149,11 @@ const TOC = [
 export default async function Docs() {
   const share = Math.round(((await api("/api/market/public/browse?kind=theme").catch(() => null))?.partnerShare ?? 0.8) * 100);
   const flow = [
-    ["Create a developer account", "Sign up with your email. Add your name or company, website and the UPI ID your earnings are paid to."],
-    ["Create a listing", "Choose theme or app, name it, say what it does, set a price (free, or ₹99 and up) and add screenshots."],
-    ["Build and test", "Themes: build on your computer with the Oyklane CLI, then upload the .zip it makes and click through it on our demo store. Apps: point the listing at your app and install it on your own test store."],
-    ["Send it for review", "We check it works, is honest and asks only for what it needs. If something needs fixing, you get a note."],
+    ["Create a developer account", "Sign up with your email. Add your name or company, website and the UPI ID your earnings are paid to. You get a Project ID."],
+    ["Add a listing", "Choose theme or app, name it and set a price (free, or ₹99 and up). You get a Theme ID or App ID straight away, with nothing to upload yet."],
+    ["Build on your computer", "The Oyklane CLI runs your theme or tests your app locally, so you don't upload every change."],
+    ["Upload it", "Themes: upload the .zip the CLI makes and click through it on our demo store. Apps: put your app on your own server and add a release."],
+    ["Send it for review", "You can have one theme or app in review at a time. We check it works, is honest and asks only for what it needs. If something needs fixing, you get a note."],
     ["Listed on the Oyklane Store", "Approved listings show on the Oyklane Store, where sellers find them and install them in one click."],
     ["Get paid", `You keep ${share}% of every theme sale and renewal and of every paid app month, paid to your UPI ID. A theme sale is paid once its 7-day refund window has closed.`],
   ];
@@ -143,8 +163,8 @@ export default async function Docs() {
         <Link className="small muted" href="/partners">
           ← For developers
         </Link>
-        <h1 style={{ fontSize: 34, marginTop: 8 }}>Developer docs</h1>
-        <p className="muted">How to build, test and sell themes and apps for Oyklane stores.</p>
+        <h1 style={{ fontSize: 34, marginTop: 8 }}>Developer guide</h1>
+        <p className="muted">How to build, test and sell themes and apps for Oyklane stores, step by step.</p>
         <nav aria-label="On this page" className="row" style={{ gap: 8, flexWrap: "wrap", marginTop: 12 }}>
           {TOC.map(([id, label]) => (
             <a key={id} className="badge" href={`#${id}`}>
@@ -169,43 +189,101 @@ export default async function Docs() {
         </ol>
       </div>
 
-      <div className="card card--pad stack" id="environments">
-        <h2>Environments</h2>
+      <div className="card card--pad stack" id="setup">
+        <h2>Set up</h2>
+        <p className="muted">You do this once, for themes and apps alike.</p>
+        <ol className="stack" style={{ paddingLeft: 20, margin: 0 }}>
+          <li>
+            Install <a href="https://nodejs.org">Node.js</a> 20 or newer.
+          </li>
+          <li>
+            <Link href="/partners/signup">Create your developer account</Link>. Your Project ID is on your dashboard.
+          </li>
+          <li>Install the Oyklane CLI and sign in:</li>
+        </ol>
+        <pre>{INSTALL}</pre>
         <ul className="ticks">
           <li>
-            <b>Developer account</b> — <Link href="/partners/signup">sign up here</Link>. Your listings, uploads, review notes and earnings live in your dashboard.
+            <b>Project ID</b> — one for your account. <b>Theme ID</b> or <b>App ID</b> — one for each listing.
           </li>
-          <li>
-            <b>Theme preview</b> — every upload runs on our demo store straight away, on every page with sample products, for you and our reviewers.
-          </li>
-          <li>
-            <b>Test store for apps</b> — make your own store at store.oyklane.com and install your app on it from your listing. Test with your own sample
-            data, not a seller's store.
-          </li>
-          <li>
-            <b>API</b> — <code>https://api.oyklane.com/api/v1</code>. The key your app gets works only for the store that installed it.
-          </li>
+          <li>A project on your computer is one theme or one app, so its .env has one of those IDs, never both.</li>
+          <li>Your sign-in is saved in your home folder, readable only by you. It opens these tools and nothing else: not your listings, earnings or account.</li>
+          <li>Keep .env out of git. New projects already ignore it.</li>
         </ul>
       </div>
 
-      <div className="card card--pad stack" id="local">
-        <h2>Build on your computer</h2>
-        <p className="muted">
-          The Oyklane CLI runs your theme on your own computer with the same engine stores use. You don't upload anything while you work: your code stays with you, and
-          Oyklane supplies sample store data and its own product, cart and checkout pages. Only config/settings_data.json is sent, so those pages take your colours and fonts.
-        </p>
-        <p className="muted small">
-          Your Project ID is on your <Link href="/partners/account">account</Link>. Add a theme <Link href="/partners/listings/new?kind=theme">listing</Link> and its page gives
-          you a Theme ID, with no upload needed. Put both in your project's .env.
-        </p>
-        <pre>{SETUP}</pre>
-        <pre>{DOTENV}</pre>
-        <pre>{WORK}</pre>
-        <ul className="ticks">
-          <li>Your sign-in is saved in your home folder, readable only by you. It opens these tools and nothing else: not your listings, earnings or account.</li>
-          <li>The zip holds only layout, templates, sections, snippets, assets, config and locales. Your .env, package.json and node_modules stay out.</li>
-          <li>Cart and account actions don't run locally. Try them on the demo store once you've uploaded.</li>
-        </ul>
+      <div className="card card--pad stack" id="build-theme">
+        <h2>Build a theme, step by step</h2>
+        <ol className="stack" style={{ paddingLeft: 20, margin: 0 }}>
+          <li>
+            <b>Add the listing.</b> On your dashboard choose <Link href="/partners/listings/new?kind=theme">New theme</Link>. You don't upload anything yet. Its page shows your Theme ID.
+          </li>
+          <li>
+            <b>Start the project.</b> This makes a small working theme to build on:
+            <pre>{THEME_START}</pre>
+            <pre>{THEME_ENV}</pre>
+          </li>
+          <li>
+            <b>Build it.</b> Your theme runs on your computer with the same engine stores use, and the page reloads when you save. Your code isn't sent anywhere. Oyklane supplies sample store data and
+            its own product, cart and checkout pages. Only config/settings_data.json is sent, so those pages take your colours and fonts. Cart and account actions don't run locally.
+          </li>
+          <li>
+            <b>Check and package it.</b> The zip holds only layout, templates, sections, snippets, assets, config and locales. Your .env, package.json and node_modules stay out.
+            <pre>{THEME_FINISH}</pre>
+          </li>
+          <li>
+            <b>Upload.</b> On your theme's page, upload dist/theme.zip as version 1.0.0. It goes straight onto our demo store, so you can click through every page with real products.
+          </li>
+          <li>
+            <b>Finish the listing.</b> Add a description of 80 characters or more, at least one screenshot, your price, and your payout UPI ID if it's paid.
+          </li>
+          <li>
+            <b>Send it for review.</b> You'll get a note if something needs fixing.
+          </li>
+          <li>
+            <b>Release updates.</b> Change your code, run oyklane package, upload 1.0.1 and send it for review. Sellers choose whether to take it. It updates their theme in place: your code changes, their
+            layouts in templates/*.json and their settings stay.
+          </li>
+        </ol>
+      </div>
+
+      <div className="card card--pad stack" id="build-app">
+        <h2>Build an app, step by step</h2>
+        <p className="muted">An app is your own web app on your own server, so there's no zip. The CLI stands in for Oyklane while you build, with the same events and signatures a real install sends.</p>
+        <ol className="stack" style={{ paddingLeft: 20, margin: 0 }}>
+          <li>
+            <b>Add the listing.</b> On your dashboard choose <Link href="/partners/listings/new?kind=app">New app</Link>. Its page shows your App ID and app secret.
+          </li>
+          <li>
+            <b>Start the project.</b> This makes a small working app, with signature checks already written:
+            <pre>{APP_START}</pre>
+            <pre>{APP_ENV}</pre>
+          </li>
+          <li>
+            <b>Build it.</b> oyklane dev sends your local app a signed app.installed event for a made-up test store, checks it refuses a forged one, and prints the link a seller would open. Nothing here touches a
+            real store.
+          </li>
+          <li>
+            <b>Call the API.</b> Make your own test store at store.oyklane.com, create an API key in Settings ▸ API (a Pro plan feature), and put it in OYKLANE_TEST_API_KEY. It reaches your app as the event's apiKey, so
+            your code calls the API just as it will for a real store.
+          </li>
+          <li>
+            <b>Test removal.</b> Your app should forget the store's key.
+            <pre>{APP_FINISH}</pre>
+          </li>
+          <li>
+            <b>Put it online.</b> Host your app over https. On your app's page, set the app link, install webhook and the permissions it needs.
+          </li>
+          <li>
+            <b>Finish the listing.</b> Add a description, screenshots, support email, privacy policy and price. oyklane check lists what's still missing. Then add a release, such as 1.0.0.
+          </li>
+          <li>
+            <b>Send it for review.</b> You'll get a note if something needs fixing.
+          </li>
+          <li>
+            <b>Release updates.</b> Your server is yours, so changes go live when you deploy them. Add a release when you want the change on your listing, and send it for review.
+          </li>
+        </ol>
       </div>
 
       <div className="card card--pad stack" id="themes">
@@ -232,14 +310,17 @@ export default async function Docs() {
         </p>
         <h3>Rules</h3>
         <ul className="ticks">
-          <li>Upload a .zip of the folder: up to 6 MB unzipped, 512 KB a file, 600 files. Text files only: .liquid .json .css .js .svg .txt.</li>
+          <li>Up to 6 MB unzipped, 512 KB a file, 600 files. Text files only: .liquid .json .css .js .svg .txt. oyklane check tells you before you upload.</li>
           <li>Every Liquid and JSON file is checked on upload; problems are listed file by file.</li>
+          <li>
+            Print <code>{"{{ powered_by }}"}</code> in your footer and <code>{"{{ content_for_layout }}"}</code> in your layout.
+          </li>
           <li>
             Build every link from <code>routes</code> (e.g. <code>{"{{ routes.cart_url }}"}</code>), never a fixed path — stores run on their own domains.
           </li>
           <li>A paid theme's code is locked in the seller's store; they customise it in the editor.</li>
-          <li>A paid theme is one payment for a year, on one store. Sellers renew to keep installing and updating it, and can get a refund within 7 days of installing it.</li>
-          <li>Versions: upload 1.0.1, 1.1.0… and send each for review. Sellers choose whether to take a new version. It updates their theme in place: your code changes, their layouts in templates/*.json and their settings stay.</li>
+          <li>A paid theme is one payment for a year, on one store, installed with a purchase code tied to that seller and domain. Sellers renew to keep installing and updating it.</li>
+          <li>Sellers can refund a theme themselves within 7 days of installing it. It happens at once, and your share of that sale comes back off your earnings.</li>
         </ul>
       </div>
 
@@ -361,6 +442,7 @@ export default async function Docs() {
 
       <div className="card card--pad stack" id="review">
         <h2>Review</h2>
+        <p className="muted">You can have one thing in review at a time, theme or app, including new versions. Send the next one once we've decided on the last.</p>
         <ul className="ticks">
           <li>It works on phones and desktops, and every page loads.</li>
           <li>No tracking or scripts the listing doesn't mention; nothing that asks shoppers for payment details.</li>

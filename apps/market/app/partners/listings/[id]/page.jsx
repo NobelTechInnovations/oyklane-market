@@ -43,25 +43,27 @@ export default async function ListingPage({ params, searchParams }) {
         )}
       </div>
 
-      {created && <div className="alert alert--ok">Created. Next: {listing.kind === "theme" ? "build it on your computer with the IDs below, then upload its .zip" : "add a release below"}, and send it for review.</div>}
+      {created && <div className="alert alert--ok">Created. Next: build it on your computer with the IDs below, then {listing.kind === "theme" ? "upload its .zip" : "add a release"} and send it for review.</div>}
       {listing.reviewNote && (
         <div className={`alert ${listing.status === "rejected" ? "alert--error" : "alert--info"}`}>
           <b>Note from Oyklane review:</b> {listing.reviewNote}
         </div>
       )}
 
-      {listing.kind === "theme" && (
-        <div className="card card--pad stack">
-          <div className="spread">
-            <h2 style={{ fontSize: 20 }}>Build on your computer</h2>
-            <Link className="btn btn--sm" href="/partners/docs#local">
-              Setup guide
-            </Link>
-          </div>
-          <p className="small muted">Paste these into your project's .env. Then oyklane dev runs this theme locally, and oyklane package makes the .zip to upload here.</p>
-          <pre>{`OYKLANE_PROJECT_ID=${partner.projectId}\nOYKLANE_THEME_ID=${listing.themeId}`}</pre>
+      <div className="card card--pad stack">
+        <div className="spread">
+          <h2 style={{ fontSize: 20 }}>Build on your computer</h2>
+          <Link className="btn btn--sm" href={listing.kind === "theme" ? "/partners/docs#build-theme" : "/partners/docs#build-app"}>
+            Step-by-step guide
+          </Link>
         </div>
-      )}
+        <p className="small muted">
+          {listing.kind === "theme"
+            ? "Paste these into your project's .env. Then oyklane dev runs this theme locally, and oyklane package makes the .zip to upload here."
+            : "Paste these into your project's .env, with the app secret below. Then oyklane dev sends your local app a test install."}
+        </p>
+        <pre>{listing.kind === "theme" ? `OYKLANE_PROJECT_ID=${partner.projectId}\nOYKLANE_THEME_ID=${listing.themeId}` : `OYKLANE_PROJECT_ID=${partner.projectId}\nOYKLANE_APP_ID=${listing.appId}`}</pre>
+      </div>
 
       <div className="card card--pad stack">
         <div className="spread">
