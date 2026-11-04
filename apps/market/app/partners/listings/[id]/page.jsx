@@ -16,7 +16,7 @@ const VSTATUS = { draft: ["Not sent", ""], in_review: ["In review", "badge--ambe
 export default async function ListingPage({ params, searchParams }) {
   const { id } = await params;
   const { created } = await searchParams;
-  await requirePartner(`/partners/listings/${id}`);
+  const partner = await requirePartner(`/partners/listings/${id}`);
   const overview = await api("/api/partners/overview", { auth: true });
   const listing = overview.listings.find((l) => l.id === id);
   if (!listing) notFound();
@@ -43,10 +43,23 @@ export default async function ListingPage({ params, searchParams }) {
         )}
       </div>
 
-      {created && <div className="alert alert--ok">Created. Next: {listing.kind === "theme" ? "upload the theme's .zip below" : "add a release below"}, then send it for review.</div>}
+      {created && <div className="alert alert--ok">Created. Next: {listing.kind === "theme" ? "build it on your computer with the IDs below, then upload its .zip" : "add a release below"}, and send it for review.</div>}
       {listing.reviewNote && (
         <div className={`alert ${listing.status === "rejected" ? "alert--error" : "alert--info"}`}>
           <b>Note from Oyklane review:</b> {listing.reviewNote}
+        </div>
+      )}
+
+      {listing.kind === "theme" && (
+        <div className="card card--pad stack">
+          <div className="spread">
+            <h2 style={{ fontSize: 20 }}>Build on your computer</h2>
+            <Link className="btn btn--sm" href="/partners/docs#local">
+              Setup guide
+            </Link>
+          </div>
+          <p className="small muted">Paste these into your project's .env. Then oyklane dev runs this theme locally, and oyklane package makes the .zip to upload here.</p>
+          <pre>{`OYKLANE_PROJECT_ID=${partner.projectId}\nOYKLANE_THEME_ID=${listing.themeId}`}</pre>
         </div>
       )}
 

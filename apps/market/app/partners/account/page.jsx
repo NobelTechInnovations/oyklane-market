@@ -20,6 +20,13 @@ export default async function Account() {
         <ProfileForm partner={partner} />
       </div>
       <div className="card card--pad stack">
+        <h3>Project ID</h3>
+        <p className="small muted">
+          Goes in your theme project's .env. See <Link href="/partners/docs#local">building on your computer</Link>.
+        </p>
+        <pre>{partner.projectId}</pre>
+      </div>
+      <div className="card card--pad stack">
         <h3>Security</h3>
         <p className="small muted">Signed in somewhere you shouldn't be? This signs you out on every device.</p>
         <form action={signOutEverywhere}>

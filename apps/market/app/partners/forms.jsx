@@ -211,7 +211,7 @@ export function ListingForm({ listing, kind: newKind, categories, scopes }) {
         <small>At least 80 characters before review.</small>
       </label>
       <label className="field" style={{ maxWidth: 260 }}>
-        <span>{kind === "theme" ? "Price (one-time, ₹)" : "Price (a month, ₹)"}</span>
+        <span>{kind === "theme" ? "Price (a year, ₹)" : "Price (a month, ₹)"}</span>
         <input className="input" name="price" type="number" min="0" step="1" defaultValue={listing?.price || 0} />
         <small>0 = free. Paid: at least ₹99, before GST.</small>
       </label>

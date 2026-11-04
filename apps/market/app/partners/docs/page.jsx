@@ -24,6 +24,18 @@ X-Oyklane-Signature: <hex HMAC-SHA256 of the body>
   "at": "2026-10-08T10:00:00.000Z"
 }`;
 
+const SETUP = `npm install -g @oyklane/cli     # needs Node.js 20 or newer
+oyklane init my-theme
+cd my-theme
+oyklane login`;
+
+const DOTENV = `OYKLANE_PROJECT_ID=prj_…        # on your account
+OYKLANE_THEME_ID=…               # on your theme's page`;
+
+const WORK = `oyklane dev       # http://localhost:9292, reloads when you save
+oyklane check     # the upload rules and the review's safety read
+oyklane package   # zips only the theme to dist/theme.zip`;
+
 const LINK = `https://yourapp.com/oyklane?store=my-store&ts=1791450000&signature=<hex>
 // signature = HMAC-SHA256("store=my-store&ts=1791450000", your app secret)
 // Refuse links older than 5 minutes.`;
@@ -107,6 +119,7 @@ const ENDPOINTS = [
 const TOC = [
   ["flow", "How it works"],
   ["environments", "Environments"],
+  ["local", "Build on your computer"],
   ["themes", "Themes"],
   ["liquid", "Liquid reference"],
   ["apps", "Apps"],
@@ -119,10 +132,10 @@ export default async function Docs() {
   const flow = [
     ["Create a developer account", "Sign up with your email. Add your name or company, website and the UPI ID your earnings are paid to."],
     ["Create a listing", "Choose theme or app, name it, say what it does, set a price (free, or ₹99 and up) and add screenshots."],
-    ["Build and test", "Themes: upload a .zip and click through it on our demo store. Apps: point the listing at your app and install it on your own test store."],
+    ["Build and test", "Themes: build on your computer with the Oyklane CLI, then upload the .zip it makes and click through it on our demo store. Apps: point the listing at your app and install it on your own test store."],
     ["Send it for review", "We check it works, is honest and asks only for what it needs. If something needs fixing, you get a note."],
     ["Listed on the Oyklane Store", "Approved listings show on the Oyklane Store, where sellers find them and install them in one click."],
-    ["Get paid", `You keep ${share}% of every theme sale and of every paid app month, paid to your UPI ID.`],
+    ["Get paid", `You keep ${share}% of every theme sale and renewal and of every paid app month, paid to your UPI ID. A theme sale is paid once its 7-day refund window has closed.`],
   ];
   return (
     <div className="wrap dash narrow" style={{ maxWidth: 900 }}>
@@ -175,6 +188,26 @@ export default async function Docs() {
         </ul>
       </div>
 
+      <div className="card card--pad stack" id="local">
+        <h2>Build on your computer</h2>
+        <p className="muted">
+          The Oyklane CLI runs your theme on your own computer with the same engine stores use. You don't upload anything while you work: your code stays with you, and
+          Oyklane supplies sample store data and its own product, cart and checkout pages. Only config/settings_data.json is sent, so those pages take your colours and fonts.
+        </p>
+        <p className="muted small">
+          Your Project ID is on your <Link href="/partners/account">account</Link>. Add a theme <Link href="/partners/listings/new?kind=theme">listing</Link> and its page gives
+          you a Theme ID, with no upload needed. Put both in your project's .env.
+        </p>
+        <pre>{SETUP}</pre>
+        <pre>{DOTENV}</pre>
+        <pre>{WORK}</pre>
+        <ul className="ticks">
+          <li>Your sign-in is saved in your home folder, readable only by you. It opens these tools and nothing else: not your listings, earnings or account.</li>
+          <li>The zip holds only layout, templates, sections, snippets, assets, config and locales. Your .env, package.json and node_modules stay out.</li>
+          <li>Cart and account actions don't run locally. Try them on the demo store once you've uploaded.</li>
+        </ul>
+      </div>
+
       <div className="card card--pad stack" id="themes">
         <h2>Themes</h2>
         <p className="muted">
@@ -205,7 +238,8 @@ export default async function Docs() {
             Build every link from <code>routes</code> (e.g. <code>{"{{ routes.cart_url }}"}</code>), never a fixed path — stores run on their own domains.
           </li>
           <li>A paid theme's code is locked in the seller's store; they customise it in the editor.</li>
-          <li>Versions: upload 1.0.1, 1.1.0… and send each for review. Sellers who bought it can install the new version.</li>
+          <li>A paid theme is one payment for a year, on one store. Sellers renew to keep installing and updating it, and can get a refund within 7 days of installing it.</li>
+          <li>Versions: upload 1.0.1, 1.1.0… and send each for review. Sellers choose whether to take a new version. It updates their theme in place: your code changes, their layouts in templates/*.json and their settings stay.</li>
         </ul>
       </div>
 

@@ -15,7 +15,7 @@ export function Price({ item, suffix = true }) {
   return (
     <span className="price">
       {inr(item.price)}
-      {suffix && item.kind === "app" ? <span className="subtle">/mo</span> : null}
+      {suffix ? <span className="subtle">{item.kind === "app" ? "/mo" : "/yr"}</span> : null}
     </span>
   );
 }

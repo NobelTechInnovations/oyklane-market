@@ -42,7 +42,7 @@ export default async function PartnersLanding() {
             </div>
             <div className="card">
               <h3>Get paid</h3>
-              <p className="muted small" style={{ marginTop: 6 }}>Themes: one-time price. Apps: monthly, billed with the seller's plan. Your {share}% goes to your UPI ID.</p>
+              <p className="muted small" style={{ marginTop: 6 }}>Themes: one payment for a year. Apps: monthly, billed with the seller's plan. Your {share}% goes to your UPI ID.</p>
             </div>
           </div>
           <div className="card card--pad">

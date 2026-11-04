@@ -7,6 +7,7 @@ import { signOut } from "../actions";
 export const metadata = { title: "Developer dashboard", robots: { index: false } };
 
 const day = (d) => (d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—");
+const SOURCE = { theme_sale: "theme sale", app_month: "app month", theme_refund: "refund" };
 
 export default async function Dashboard() {
   const partner = await requirePartner("/partners/dashboard");
@@ -42,6 +43,7 @@ export default async function Dashboard() {
         <div className="card stat">
           <span className="small muted">Owed to you</span>
           <b>{inr(e.owed)}</b>
+          {e.held > 0 && <span className="small muted">{inr(e.held)} held until refund windows close</span>}
         </div>
         <div className="card stat">
           <span className="small muted">Earned so far</span>
@@ -55,6 +57,17 @@ export default async function Dashboard() {
           <span className="small muted">Your share</span>
           <b>{Math.round(e.share * 100)}%</b>
         </div>
+      </div>
+
+      <div className="card card--pad stack">
+        <div className="spread">
+          <h2 style={{ fontSize: 20 }}>Your Project ID</h2>
+          <Link className="btn btn--sm" href="/partners/docs#local">
+            Build themes on your computer
+          </Link>
+        </div>
+        <p className="small muted">Goes in your theme project's .env, with the Theme ID from the theme's page.</p>
+        <pre>{`OYKLANE_PROJECT_ID=${partner.projectId}`}</pre>
       </div>
 
       <div className="card">
@@ -90,7 +103,7 @@ export default async function Dashboard() {
                     <td>
                       <span className={`badge ${STATUS[l.status]?.[1] || ""}`}>{STATUS[l.status]?.[0] || l.status}</span>
                     </td>
-                    <td>{l.free ? "Free" : `${inr(l.price)}${l.kind === "app" ? "/mo" : ""}`}</td>
+                    <td>{l.free ? "Free" : `${inr(l.price)}${l.kind === "app" ? "/mo" : "/yr"}`}</td>
                     <td>{l.installs}</td>
                     <td style={{ textAlign: "right" }}>
                       <Link className="btn btn--sm" href={`/partners/listings/${l.id}`}>
@@ -129,10 +142,10 @@ export default async function Dashboard() {
                 {e.recent.map((r) => (
                   <tr key={r.id}>
                     <td>{day(r.createdAt)}</td>
-                    <td>{data.listings.find((l) => l.id === r.listingId)?.name || "—"} · {r.source === "theme_sale" ? "theme sale" : "app month"}</td>
+                    <td>{data.listings.find((l) => l.id === r.listingId)?.name || "—"} · {SOURCE[r.source] || r.source}</td>
                     <td>{inr(r.gross)}</td>
                     <td>{inr(r.share)}</td>
-                    <td>{r.paid ? <span className="badge badge--green">Paid</span> : <span className="badge">Owed</span>}</td>
+                    <td>{r.paid ? <span className="badge badge--green">Paid</span> : new Date(r.availableAt) > new Date() ? <span className="badge">Held until {day(r.availableAt)}</span> : <span className="badge">Owed</span>}</td>
                   </tr>
                 ))}
               </tbody>
