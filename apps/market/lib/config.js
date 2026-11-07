@@ -38,5 +38,9 @@ const OFFICIAL_SHOTS = {
   fizz: ["/showcase/fizz.jpg"],
   carry: ["/showcase/carry.jpg"],
   solo: ["/showcase/solo.jpg"],
+  fresh: ["/showcase/fresh.jpg"],
+  haveli: ["/showcase/haveli.jpg"],
+  zari: ["/showcase/zari.jpg"],
+  varq: ["/showcase/varq.jpg", "/showcase/varq-box.jpg"],
 };
 export const withShots = (item) => (item?.official && item.kind === "theme" && !item.screenshots?.length && OFFICIAL_SHOTS[item.slug] ? { ...item, screenshots: OFFICIAL_SHOTS[item.slug] } : item);
