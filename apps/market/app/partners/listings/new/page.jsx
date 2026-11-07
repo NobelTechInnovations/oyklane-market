@@ -20,7 +20,7 @@ export default async function NewListing({ searchParams }) {
         <p className="muted">Start with the basics — you upload {kind === "theme" ? "the theme" : "releases"} next.</p>
       </div>
       <div className="card card--pad">
-        <ListingForm kind={kind} categories={data.categories} scopes={data.scopes} />
+        <ListingForm kind={kind} categories={data.categories} scopes={data.scopes} events={data.events} />
       </div>
     </div>
   );

@@ -59,10 +59,11 @@ export default async function ListingPage({ params, searchParams }) {
         </div>
         <p className="small muted">
           {listing.kind === "theme"
-            ? "Paste these into your project's .env. Then oyklane dev runs this theme locally, and oyklane package makes the .zip to upload here."
+            ? "Paste these into your project's .env. Then oyklane dev runs this theme locally, and oyklane push uploads it here."
             : "Paste these into your project's .env, with the app secret below. Then oyklane dev sends your local app a test install."}
         </p>
         <pre>{listing.kind === "theme" ? `OYKLANE_PROJECT_ID=${partner.projectId}\nOYKLANE_THEME_ID=${listing.themeId}` : `OYKLANE_PROJECT_ID=${partner.projectId}\nOYKLANE_APP_ID=${listing.appId}`}</pre>
+        <p className="small muted">To test it for real, make a store with your developer email and open /admin/market/{listing.kind}/{listing.slug} there. It installs free, before review.</p>
       </div>
 
       <div className="card card--pad stack">
@@ -123,7 +124,7 @@ export default async function ListingPage({ params, searchParams }) {
 
       <div className="card card--pad">
         <h2 style={{ fontSize: 20, marginBottom: 16 }}>Listing</h2>
-        <ListingForm listing={listing} categories={overview.categories} scopes={overview.scopes} />
+        <ListingForm listing={listing} categories={overview.categories} scopes={overview.scopes} events={overview.events} />
       </div>
 
       {listing.kind === "app" && (

@@ -79,9 +79,20 @@ function listingBody(fd) {
       supportEmail: str(fd, "supportEmail") || "",
       privacyUrl: str(fd, "privacyUrl") || "",
       scopes: fd.getAll("scopes").map(String),
+      webhookEvents: fd.getAll("webhookEvents").map(String),
+      settingsSchema: sellerSettings(str(fd, "settingsSchema")),
     });
   }
   return body;
+}
+
+function sellerSettings(text) {
+  if (!text) return [];
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("Settings for sellers must be valid JSON.");
+  }
 }
 
 export async function createListing(_prev, fd) {

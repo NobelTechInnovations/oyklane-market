@@ -176,7 +176,7 @@ function ImagesField({ name, label, hint, initial = [], multiple }) {
   );
 }
 
-export function ListingForm({ listing, kind: newKind, categories, scopes }) {
+export function ListingForm({ listing, kind: newKind, categories, scopes, events = [] }) {
   const isNew = !listing;
   const kind = listing?.kind || newKind;
   const [state, action] = useActionState(isNew ? createListing : saveListing, null);
@@ -251,6 +251,23 @@ export function ListingForm({ listing, kind: newKind, categories, scopes }) {
               ))}
             </div>
           </div>
+          <div className="field">
+            <span>Store events it needs (optional)</span>
+            <div className="checks">
+              {events.map((e) => (
+                <label key={e.key}>
+                  <input type="checkbox" name="webhookEvents" value={e.key} defaultChecked={(listing?.pendingChanges?.webhookEvents || listing?.webhookEvents)?.includes(e.key)} /> {e.label}
+                </label>
+              ))}
+            </div>
+            <small>Sent to your install webhook while a store has your app. Each needs the matching read permission above.</small>
+          </div>
+          <label className="field">
+            <span>Settings for sellers (optional)</span>
+            <textarea className="textarea" name="settingsSchema" defaultValue={listing?.settingsSchema?.length ? JSON.stringify(listing.settingsSchema, null, 2) : ""} placeholder={'[\n  { "id": "greeting", "label": "Greeting", "type": "text" }\n]'} />
+            <small>Fields sellers fill in in their admin. Types: text, textarea, number, select, checkbox. Your app reads them from GET /app.</small>
+          </label>
+          {Object.keys(listing?.pendingChanges || {}).length > 0 && <div className="alert alert--info">Your changes to permissions, store events or the storefront script go live with your next approved version.</div>}
           <div className="two">
             <label className="field">
               <span>Support email</span>

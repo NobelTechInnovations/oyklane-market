@@ -37,13 +37,18 @@ OYKLANE_APP_SECRET=oyks_…         # on your app's page
 APP_URL=http://localhost:3000
 OYKLANE_TEST_API_KEY=oyk_…        # optional: a key from your own test store`;
 
-const THEME_START = `oyklane init my-theme
+const THEME_START = `oyklane init my-theme              # a complete Oyklane theme to build on
 cd my-theme
 # paste your two IDs into .env
-oyklane dev                       # http://localhost:9292`;
+oyklane dev --open                 # http://localhost:9292`;
 
-const THEME_FINISH = `oyklane check                     # the upload rules and the review's safety read
-oyklane package                   # only the theme, to dist/theme.zip`;
+const THEME_REUSE = `oyklane themes                     # the 10 Oyklane themes
+oyklane init my-theme --from fresh # start from a different one
+oyklane sections                   # every section you can add
+oyklane add faq                    # bring one in, with its CSS, JS and snippets`;
+
+const THEME_FINISH = `oyklane check                      # the upload rules and the review's safety read
+oyklane push --version 1.0.0 --changelog "First release"`;
 
 const APP_START = `oyklane init my-app --app
 cd my-app
@@ -52,7 +57,50 @@ npm start                         # your app, in this terminal
 oyklane dev                       # in a second terminal: a test install`;
 
 const APP_FINISH = `oyklane dev --uninstall           # a test uninstall
-oyklane check                     # what your listing still needs for review`;
+oyklane dev --event order.created # a store event
+oyklane check                     # what your listing still needs
+oyklane push --version 1.0.0      # add the release`;
+
+const SDK = `const { verifyEvent, verifyOpenLink, createClient } = require("./oyklane");
+
+const event = verifyEvent(rawBody, req.headers, process.env.OYKLANE_APP_SECRET);
+const api = createClient({ apiBase: event.apiBase, apiKey: event.apiKey });
+
+const { data } = await api.get("/products", { limit: 20 });
+for await (const order of api.all("/orders")) console.log(order.number);
+const { data: app } = await api.get("/app"); // your permissions and the seller's settings`;
+
+const SETTING_SCHEMA = `{
+  "name": "Testimonials",
+  "description": "Customer reviews with star ratings.",
+  "group": "Trust",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What people say" }
+  ],
+  "blocks": [
+    { "type": "review", "name": "Review", "settings": [
+      { "type": "textarea", "id": "quote", "label": "Review" }
+    ] }
+  ],
+  "max_blocks": 6,
+  "default_blocks": [{ "type": "review" }]
+}`;
+
+const SETTING_TYPES = [
+  ["text, url", "One line"],
+  ["textarea, richtext", "Text editor"],
+  ["html, css", "Code box"],
+  ["number", "Number box"],
+  ["range", "Slider, with min, max, step and unit"],
+  ["checkbox", "Switch"],
+  ["select", "Dropdown, with options: [{ value, label }]"],
+  ["color", "Colour picker. An empty default means the theme's own."],
+  ["font", "Google Fonts list"],
+  ["image_picker", "Upload, or choose from Files"],
+  ["collection, product, menu", "Picks one and gives its handle"],
+  ["collection_list, product_list", "Picks several"],
+  ["header, paragraph", "A heading or a line of help, with content. No value."],
+];
 
 const LINK = `https://yourapp.com/oyklane?store=my-store&ts=1791450000&signature=<hex>
 // signature = HMAC-SHA256("store=my-store&ts=1791450000", your app secret)
@@ -139,6 +187,7 @@ const TOC = [
   ["setup", "Set up"],
   ["build-theme", "Build a theme"],
   ["build-app", "Build an app"],
+  ["customizer", "The customizer"],
   ["themes", "Themes"],
   ["liquid", "Liquid reference"],
   ["apps", "Apps"],
@@ -219,30 +268,33 @@ export default async function Docs() {
             <b>Add the listing.</b> On your dashboard choose <Link href="/partners/listings/new?kind=theme">New theme</Link>. You don't upload anything yet. Its page shows your Theme ID.
           </li>
           <li>
-            <b>Start the project.</b> This makes a small working theme to build on:
+            <b>Start the project.</b> You get a complete, working theme: header, footer, 19 sections, product cards, theme settings and all the CSS and JS. Its README explains every part.
             <pre>{THEME_START}</pre>
             <pre>{THEME_ENV}</pre>
+          </li>
+          <li>
+            <b>Open it in VS Code.</b> Install the Liquid extension it suggests. Press F5 to run the theme and open the browser. You get snippets (type oysection), checks on your JSON files, and tasks for check and package.
           </li>
           <li>
             <b>Build it.</b> Your theme runs on your computer with the same engine stores use, and the page reloads when you save. Your code isn't sent anywhere. Oyklane supplies sample store data and
             its own product, cart and checkout pages. Only config/settings_data.json is sent, so those pages take your colours and fonts. Cart and account actions don't run locally.
           </li>
           <li>
-            <b>Check and package it.</b> The zip holds only layout, templates, sections, snippets, assets, config and locales. Your .env, package.json and node_modules stay out.
+            <b>Reuse what's built.</b> Any section from any Oyklane theme can come into yours:
+            <pre>{THEME_REUSE}</pre>
+          </li>
+          <li>
+            <b>Check and upload it.</b> check lists problems by file and line. push checks it, zips only the theme and uploads it, and it goes onto our demo store. Your .env, package.json and node_modules stay out.
             <pre>{THEME_FINISH}</pre>
           </li>
           <li>
-            <b>Upload.</b> On your theme's page, upload dist/theme.zip as version 1.0.0. It goes straight onto our demo store, so you can click through every page with real products.
+            <b>Try the real customizer.</b> Make a store at store.oyklane.com with the same email as your developer account, and open the link push prints. Your theme installs there free, before review, in the real theme editor.
           </li>
           <li>
-            <b>Finish the listing.</b> Add a description of 80 characters or more, at least one screenshot, your price, and your payout UPI ID if it's paid.
+            <b>Finish the listing and send it for review.</b> Add a description of 80 characters or more, at least one screenshot, your price, and your payout UPI ID if it's paid.
           </li>
           <li>
-            <b>Send it for review.</b> You'll get a note if something needs fixing.
-          </li>
-          <li>
-            <b>Release updates.</b> Change your code, run oyklane package, upload 1.0.1 and send it for review. Sellers choose whether to take it. It updates their theme in place: your code changes, their
-            layouts in templates/*.json and their settings stay.
+            <b>Release updates.</b> Change your code and push 1.0.1, then send it for review. Sellers choose whether to take it. It updates their theme in place: your code changes, their layouts in templates/*.json and their settings stay.
           </li>
         </ol>
       </div>
@@ -255,35 +307,84 @@ export default async function Docs() {
             <b>Add the listing.</b> On your dashboard choose <Link href="/partners/listings/new?kind=app">New app</Link>. Its page shows your App ID and app secret.
           </li>
           <li>
-            <b>Start the project.</b> This makes a small working app, with signature checks already written:
+            <b>Start the project.</b> You get a working app and the Oyklane SDK, with signature checks already written. Its README explains every part.
             <pre>{APP_START}</pre>
             <pre>{APP_ENV}</pre>
           </li>
           <li>
-            <b>Build it.</b> oyklane dev sends your local app a signed app.installed event for a made-up test store, checks it refuses a forged one, and prints the link a seller would open. Nothing here touches a
-            real store.
+            <b>Build it.</b> oyklane dev sends your local app a signed app.installed event for a made-up test store, checks it refuses a forged one, and prints the link a seller would open. Nothing here touches a real store.
           </li>
           <li>
-            <b>Call the API.</b> Make your own test store at store.oyklane.com, create an API key in Settings ▸ API (a Pro plan feature), and put it in OYKLANE_TEST_API_KEY. It reaches your app as the event's apiKey, so
-            your code calls the API just as it will for a real store.
+            <b>Use the SDK.</b> oyklane.js is in your project, with no dependencies. It checks signatures and Open links, and calls the API with paging and retries.
+            <pre>{SDK}</pre>
           </li>
           <li>
-            <b>Test removal.</b> Your app should forget the store's key.
+            <b>Test what happens next.</b> Your app should forget the store's key on removal, and handle the store events it asks for.
             <pre>{APP_FINISH}</pre>
           </li>
           <li>
-            <b>Put it online.</b> Host your app over https. On your app's page, set the app link, install webhook and the permissions it needs.
+            <b>Put it online and fill in the listing.</b> Host your app over https. Set the app link, install webhook, permissions, store events and any settings for sellers. Add a description, screenshots, support email, privacy policy and price.
           </li>
           <li>
-            <b>Finish the listing.</b> Add a description, screenshots, support email, privacy policy and price. oyklane check lists what's still missing. Then add a release, such as 1.0.0.
+            <b>Test it for real.</b> Make a store at store.oyklane.com with the same email as your developer account, and open /admin/market/app/your-app there. It installs free, before review, with a real API key and real events.
           </li>
           <li>
             <b>Send it for review.</b> You'll get a note if something needs fixing.
           </li>
           <li>
-            <b>Release updates.</b> Your server is yours, so changes go live when you deploy them. Add a release when you want the change on your listing, and send it for review.
+            <b>Release updates.</b> Your server is yours, so changes go live when you deploy them. Changes to permissions, store events or the storefront script wait for your next approved version.
           </li>
         </ol>
+      </div>
+
+      <div className="card card--pad stack" id="customizer">
+        <h2>How the customizer works</h2>
+        <p className="muted">
+          Nothing is registered by hand. The theme editor in a seller's admin reads your files, so what you define here is what sellers can change.
+        </p>
+        <ul className="ticks">
+          <li>
+            <b>config/settings_schema.json</b> — theme settings: colours, fonts, layout. Read in Liquid as <code>settings.color_primary</code>.
+          </li>
+          <li>
+            <b>{"{% schema %}"} in a section</b> — that section's fields, and its entry in Add section. Read as <code>section.settings.heading</code>.
+          </li>
+          <li>
+            <b>blocks in a schema</b> — a list sellers add to and reorder. Read with <code>{"{% for block in section.blocks %}"}</code>.
+          </li>
+          <li>
+            <b>{"{% section 'header' %}"} in the layout</b> — a global section, edited once for every page.
+          </li>
+          <li>
+            <b>templates/index.json</b> — the sections already on the home page.
+          </li>
+        </ul>
+        <pre>{SETTING_SCHEMA}</pre>
+        <p className="muted small">
+          group is one of Banners, Products, Story, Trust, Text or Other. templates limits a section to certain pages, and limit to a number per page. Sellers' values are saved in their copy of settings_data.json and templates/*.json, and an update never overwrites them.
+        </p>
+        <h3>Setting types</h3>
+        <div style={{ overflowX: "auto" }}>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Sellers get</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SETTING_TYPES.map(([type, what]) => (
+                <tr key={type}>
+                  <td>
+                    <code>{type}</code>
+                  </td>
+                  <td>{what}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="muted small">Every setting also takes id, label, default and info. oyklane check catches a type or id the editor can't use.</p>
       </div>
 
       <div className="card card--pad stack" id="themes">
@@ -308,6 +409,20 @@ export default async function Docs() {
           <code>sys-contact</code>), and your sections can go around it — add <code>templates/product.json</code> and so on for a starting layout. Cart and
           checkout can't be changed.
         </p>
+        <h3>Reuse what's built</h3>
+        <ul className="ticks">
+          <li>
+            <code>{"{% render 'snippets/product-card', product: product %}"}</code> — a product card. Keep its data-oy-card attributes and it follows the seller's card settings.
+          </li>
+          <li>
+            <code>{"{% render 'snippets/section-head', eyebrow: e, title: t %}"}</code> — a section heading. <code>{"{% render 'snippets/icon', icon: 'star' %}"}</code> — icons.
+          </li>
+          <li>
+            <code>{"{{ 'image' | placeholder_svg }}"}</code> — a drawing until the seller adds a picture.
+          </li>
+          <li>custom-html, app-instagram-feed and app-google-reviews — sections every theme gets, with no file needed.</li>
+          <li>The cart drawer, sign-in popup and quick add come with every store.</li>
+        </ul>
         <h3>Rules</h3>
         <ul className="ticks">
           <li>Up to 6 MB unzipped, 512 KB a file, 600 files. Text files only: .liquid .json .css .js .svg .txt. oyklane check tells you before you upload.</li>
@@ -383,14 +498,29 @@ export default async function Docs() {
             <b>Storefront script</b> (optional, https) — added to every page of stores that install your app, never checkout or payment pages.
           </li>
           <li>
+            <b>Store events and settings for sellers</b> (optional) — see below.
+          </li>
+          <li>
             <b>Support email and privacy policy</b> — needed for review.
           </li>
         </ul>
         <h3>Install webhook</h3>
         <pre>{INSTALLED}</pre>
         <p className="muted small">
-          When it's removed you get <code>app.uninstalled</code> and the key stops working. Keep each store's key safe on your server.
+          When it's removed you get <code>app.uninstalled</code> and the key stops working. Keep each store's key safe on your server. It works on every Oyklane plan.
         </p>
+        <h3>Store events and settings</h3>
+        <ul className="ticks">
+          <li>
+            <b>Store events</b> — tick the ones you need on your listing: order.created, order.paid, product.updated and more. They reach your install webhook while a store has your app, signed over the timestamp and body. Each needs the matching read permission.
+          </li>
+          <li>
+            <b>Settings</b> — fields sellers fill in in their admin. Read them from <code>GET /app</code>. You get <code>app.settings_updated</code> when they change.
+          </li>
+          <li>
+            <b>Storefront script</b> — your script tag carries <code>data-oyklane-store</code>, so it knows which store it's on.
+          </li>
+        </ul>
         <h3>Checking it's really from Oyklane</h3>
         <pre>{VERIFY}</pre>
         <h3>Opening your app</h3>
