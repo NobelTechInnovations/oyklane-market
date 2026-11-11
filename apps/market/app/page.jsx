@@ -1,39 +1,54 @@
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { ThemeCard, AppCard } from "./components/Cards";
+import { withShots } from "@/lib/config";
 
 export default async function Home() {
   const [themes, apps] = await Promise.all([api("/api/market/public/browse?kind=theme").catch(() => ({ items: [] })), api("/api/market/public/browse?kind=app").catch(() => ({ items: [] }))]);
   return (
     <>
-      <section className="hero">
-        <div className="wrap hero__in">
-          <span className="badge badge--accent">For Oyklane stores</span>
-          <h1 style={{ marginTop: 16 }}>
-            Themes and apps that make <span className="grad-text">your store sell more</span>
-          </h1>
-          <p className="lead">Free and paid — by Oyklane and independent developers. Preview every page of a theme with real products before you install it.</p>
-          <form className="search" action="/search" role="search">
-            <label htmlFor="q" className="sr-only">
-              Search themes and apps
-            </label>
-            <input id="q" name="q" placeholder="Search themes and apps — “grocery”, “reviews”, “WhatsApp”…" />
-            <button className="btn btn--primary">Search</button>
-          </form>
-          <div className="chips">
-            <Link className="chip" href="/themes?category=food">
-              Food & grocery themes
-            </Link>
-            <Link className="chip" href="/themes?category=fashion">
-              Fashion themes
-            </Link>
-            <Link className="chip" href="/themes?price=free">
-              Free themes
-            </Link>
-            <Link className="chip" href="/apps?category=marketing">
-              Marketing apps
-            </Link>
+      <section className="hero hero--x">
+        <div className="wrap hero__grid">
+          <div className="hero__copy">
+            <span className="badge badge--accent">The Oyklane Store</span>
+            <h1 style={{ marginTop: 18 }}>
+              Themes and apps that make <span className="grad-text">your store sell more</span>
+            </h1>
+            <p className="lead">Free and paid — by Oyklane and independent developers. Preview every page of a theme with real products before you install it.</p>
+            <form className="search" action="/search" role="search">
+              <label htmlFor="q" className="sr-only">
+                Search themes and apps
+              </label>
+              <input id="q" name="q" placeholder="Search “grocery”, “reviews”, “WhatsApp”…" />
+              <button className="btn btn--primary">Search</button>
+            </form>
+            <div className="chips">
+              <Link className="chip" href="/themes?category=food">Food & grocery</Link>
+              <Link className="chip" href="/themes?category=fashion">Fashion</Link>
+              <Link className="chip" href="/themes?category=jewellery">Jewellery</Link>
+              <Link className="chip" href="/themes?price=free">Free themes</Link>
+              <Link className="chip" href="/apps?category=marketing">Marketing apps</Link>
+            </div>
           </div>
+          <div className="hero__art" aria-hidden="true">
+            {themes.items
+              .map(withShots)
+              .filter((t) => t.screenshots?.[0])
+              .slice(0, 3)
+              .map((t, i) => (
+                <div key={t.id} className={`hero__shot hero__shot--${i}`}>
+                  <img src={t.screenshots[0]} alt="" />
+                </div>
+              ))}
+          </div>
+        </div>
+        <div className="wrap">
+          <ul className="trust">
+            <li><b>{themes.items.length}+</b> themes</li>
+            <li><b>{apps.items.length}+</b> apps</li>
+            <li><b>Live preview</b> with real products</li>
+            <li><b>7-day</b> refunds on paid themes</li>
+          </ul>
         </div>
       </section>
 
