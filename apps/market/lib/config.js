@@ -44,5 +44,8 @@ const OFFICIAL_SHOTS = {
   varq: ["/showcase/varq.jpg", "/showcase/varq-box.jpg"],
   aanch: ["/showcase/aanch.jpg", "/showcase/aanch-flavours.jpg"],
   amber: ["/showcase/amber.jpg", "/showcase/amber-bezel.jpg"],
+  noor: ["/showcase/noor.jpg"],
+  mithas: ["/showcase/mithas.jpg"],
+  velours: ["/showcase/velours.jpg"],
 };
 export const withShots = (item) => (item?.official && item.kind === "theme" && !item.screenshots?.length && OFFICIAL_SHOTS[item.slug] ? { ...item, screenshots: OFFICIAL_SHOTS[item.slug] } : item);
