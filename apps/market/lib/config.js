@@ -18,6 +18,9 @@ export const CATEGORY_LABELS = {
   electronics: "Electronics",
   beauty: "Beauty",
   home: "Home & living",
+  kids: "Kids & toys",
+  sports: "Sports & fitness",
+  books: "Books & stationery",
   general: "Any shop",
   marketing: "Marketing",
   sales: "Sales & checkout",
@@ -47,5 +50,10 @@ const OFFICIAL_SHOTS = {
   noor: ["/showcase/noor.jpg"],
   mithas: ["/showcase/mithas.jpg"],
   velours: ["/showcase/velours.jpg"],
+  volt: ["/showcase/volt.jpg", "/showcase/volt-2.jpg"],
+  ankur: ["/showcase/ankur.jpg", "/showcase/ankur-2.jpg"],
+  stride: ["/showcase/stride.jpg", "/showcase/stride-2.jpg"],
+  pothi: ["/showcase/pothi.jpg", "/showcase/pothi-2.jpg"],
+  mitti: ["/showcase/mitti.jpg", "/showcase/mitti-2.jpg"],
 };
 export const withShots = (item) => (item?.official && item.kind === "theme" && !item.screenshots?.length && OFFICIAL_SHOTS[item.slug] ? { ...item, screenshots: OFFICIAL_SHOTS[item.slug] } : item);
