@@ -61,5 +61,9 @@ const OFFICIAL_SHOTS = {
   darzi: ["/showcase/darzi.jpg", "/showcase/darzi-2.jpg"],
   kundan: ["/showcase/kundan.jpg", "/showcase/kundan-2.jpg"],
   heera: ["/showcase/heera.jpg", "/showcase/heera-2.jpg"],
+  phulkari: ["/showcase/phulkari.jpg", "/showcase/phulkari-2.jpg"],
+  tara: ["/showcase/tara.jpg", "/showcase/tara-2.jpg"],
+  silsila: ["/showcase/silsila.jpg", "/showcase/silsila-2.jpg"],
+  gulmohar: ["/showcase/gulmohar.jpg", "/showcase/gulmohar-2.jpg"],
 };
 export const withShots = (item) => (item?.official && item.kind === "theme" && !item.screenshots?.length && OFFICIAL_SHOTS[item.slug] ? { ...item, screenshots: OFFICIAL_SHOTS[item.slug] } : item);
