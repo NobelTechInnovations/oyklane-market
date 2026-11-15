@@ -107,7 +107,7 @@ export default async function Home() {
             <div className="section__head">
               <div>
                 <h2>Themes by industry</h2>
-                <p>Made for how Indian brands sell — from sarees and sweets to phones and books.</p>
+                <p>Made for how brands really sell — from fashion and food to phones and books.</p>
               </div>
             </div>
             <nav className="industries" aria-label="Themes by industry">
@@ -146,7 +146,7 @@ export default async function Home() {
           <div className="band">
             <div>
               <h2>Build themes and apps. Keep {Math.round((themes.partnerShare ?? 0.8) * 100)}% of every sale.</h2>
-              <p>List free or paid themes and apps for thousands of Indian brands on Oyklane. We handle payments and licences — you get paid by UPI.</p>
+              <p>List free or paid themes and apps for brands selling on Oyklane. We handle payments and licences — you get paid by UPI.</p>
             </div>
             <div className="row">
               <Link className="btn btn--accent btn--lg" href="/partners/signup">

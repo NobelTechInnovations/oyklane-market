@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { api } from "@/lib/api";
 
-export const metadata = { title: "Build for Oyklane", description: "Sell themes and apps to Indian brands on Oyklane. Keep most of every sale; we handle payments, GST and licences." };
+export const metadata = { title: "Build for Oyklane", description: "Sell themes and apps to brands on Oyklane. Keep most of every sale; we handle payments, GST and licences." };
 
 export default async function PartnersLanding() {
   const share = Math.round(((await api("/api/market/public/browse?kind=theme").catch(() => null))?.partnerShare ?? 0.8) * 100);
@@ -9,7 +9,7 @@ export default async function PartnersLanding() {
     <>
       <section className="hero">
         <div className="wrap hero__in">
-          <h1 style={{ maxWidth: 820, textWrap: "balance" }}>Build themes and apps for Indian brands. Keep {share}%.</h1>
+          <h1 style={{ maxWidth: 820, textWrap: "balance" }}>Build themes and apps for brands everywhere. Keep {share}%.</h1>
           <p className="lead">List free or paid. Oyklane takes the payment, checks the licence and sends your share to your UPI ID.</p>
           <div className="row" style={{ marginTop: 28 }}>
             <Link className="btn btn--accent btn--lg" href="/partners/signup">

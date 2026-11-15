@@ -226,7 +226,7 @@ export default async function Docs() {
       <div className="card card--pad stack" id="flow">
         <h2>How it works</h2>
         <p className="muted">
-          Oyklane is an e-commerce platform for Indian brands. Sellers run their store from the Oyklane admin and add themes and apps from the Oyklane Store. You
+          Oyklane is an e-commerce platform for brands. Sellers run their store from the Oyklane admin and add themes and apps from the Oyklane Store. You
           build them; Oyklane hosts the listing, takes the seller's payment and pays you your share.
         </p>
         <ol className="stack" style={{ paddingLeft: 20, margin: 0 }}>
