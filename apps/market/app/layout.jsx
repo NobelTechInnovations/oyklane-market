@@ -3,6 +3,7 @@ import Link from "next/link";
 import { currentPartner } from "@/lib/api";
 import { ADMIN_ORIGIN, MAIN_SITE, SITE_URL } from "@/lib/config";
 import { OyklaneLogo } from "./components/OyklaneLogo";
+import { NavLinks } from "./components/NavLinks";
 import { UtmCapture } from "./components/UtmCapture";
 
 export const metadata = {
@@ -15,9 +16,15 @@ export const metadata = {
 export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a10" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c0f14" },
   ],
 };
+
+const BROWSE = [
+  ["/themes", "Themes"],
+  ["/apps", "Apps"],
+  ["/partners", "For developers"],
+];
 
 export default async function RootLayout({ children }) {
   const partner = await currentPartner();
@@ -26,20 +33,16 @@ export default async function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600&display=swap" />
       </head>
       <body>
         <header className="nav">
           <div className="wrap nav__in">
             <Link href="/" className="brand" aria-label="Oyklane Store home">
-              <OyklaneLogo height={28} />
+              <OyklaneLogo height={26} />
               <small>Store</small>
             </Link>
-            <nav className="nav__links" aria-label="Browse">
-              <Link href="/themes">Themes</Link>
-              <Link href="/apps">Apps</Link>
-              <Link href="/partners">For developers</Link>
-            </nav>
+            <NavLinks className="nav__links" links={BROWSE} />
             <div className="nav__right">
               <a className="link hide-sm" href={`${ADMIN_ORIGIN}/admin`}>
                 Seller login
@@ -55,28 +58,42 @@ export default async function RootLayout({ children }) {
               )}
             </div>
           </div>
-          <nav className="tabs-sm" aria-label="Browse">
-            <Link href="/themes">Themes</Link>
-            <Link href="/apps">Apps</Link>
-            <Link href="/partners">For developers</Link>
-            <a href={`${ADMIN_ORIGIN}/admin`}>Seller login</a>
-          </nav>
+          <NavLinks className="tabs-sm" links={[...BROWSE, [`${ADMIN_ORIGIN}/admin`, "Seller login", true]]} />
         </header>
         <main id="main">{children}</main>
         <footer className="footer">
-          <div className="wrap spread">
-            <p>
-              © {new Date().getFullYear()} Oyklane. Themes and apps for <a href={MAIN_SITE}>Oyklane</a> stores.
-            </p>
-            <div className="row">
-              <Link href="/themes">Themes</Link>
-              <Link href="/apps">Apps</Link>
-              <Link href="/partners">Build for Oyklane</Link>
-              <Link href="/partners/docs">Developer docs</Link>
-              <a href={`${MAIN_SITE}/terms`}>Terms</a>
-              <a href={`${MAIN_SITE}/privacy`}>Privacy</a>
+          <div className="wrap footer__cols">
+            <div className="footer__brand">
+              <OyklaneLogo height={24} />
+              <p>Themes and apps for Oyklane stores, by Oyklane and independent developers. Preview everything before you install.</p>
+            </div>
+            <div>
+              <h4>Browse</h4>
+              <ul>
+                <li><Link href="/themes">Themes</Link></li>
+                <li><Link href="/themes?price=free">Free themes</Link></li>
+                <li><Link href="/apps">Apps</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Developers</h4>
+              <ul>
+                <li><Link href="/partners">Build for Oyklane</Link></li>
+                <li><Link href="/partners/docs">Developer docs</Link></li>
+                <li><Link href={partner ? "/partners/dashboard" : "/partners/login"}>{partner ? "Developer dashboard" : "Developer login"}</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Oyklane</h4>
+              <ul>
+                <li><a href={MAIN_SITE}>oyklane.com</a></li>
+                <li><a href={`${ADMIN_ORIGIN}/admin`}>Seller login</a></li>
+                <li><a href={`${MAIN_SITE}/terms`}>Terms</a></li>
+                <li><a href={`${MAIN_SITE}/privacy`}>Privacy</a></li>
+              </ul>
             </div>
           </div>
+          <div className="wrap footer__base">© {new Date().getFullYear()} Oyklane. All rights reserved.</div>
         </footer>
         <UtmCapture site="market" apiUrl={(process.env.NEXT_PUBLIC_API_URL || "https://api.oyklane.com").replace(/\/$/, "")} />
       </body>

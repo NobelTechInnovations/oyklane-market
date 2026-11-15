@@ -9,10 +9,7 @@ export default async function PartnersLanding() {
     <>
       <section className="hero">
         <div className="wrap hero__in">
-          <span className="badge badge--accent">Oyklane developers</span>
-          <h1 style={{ marginTop: 16, maxWidth: 820 }}>
-            Build themes and apps for Indian brands. <span className="grad-text">Keep {share}%.</span>
-          </h1>
+          <h1 style={{ maxWidth: 820, textWrap: "balance" }}>Build themes and apps for Indian brands. Keep {share}%.</h1>
           <p className="lead">List free or paid. Oyklane takes the payment, checks the licence and sends your share to your UPI ID.</p>
           <div className="row" style={{ marginTop: 28 }}>
             <Link className="btn btn--accent btn--lg" href="/partners/signup">
@@ -45,7 +42,7 @@ export default async function PartnersLanding() {
               <p className="muted small" style={{ marginTop: 6 }}>Themes: one payment for a year. Apps: monthly, billed with the seller's plan. Your {share}% goes to your UPI ID.</p>
             </div>
           </div>
-          <div className="card card--pad">
+          <div className="card card--pad" style={{ marginTop: 12 }}>
             <h3>Your work stays yours</h3>
             <ul className="ticks" style={{ marginTop: 12 }}>
               <li>Theme files never leave our servers — previews are rendered, not downloaded.</li>
