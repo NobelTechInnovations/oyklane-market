@@ -1,0 +1,20 @@
+# Oyklane Store (market) on the AWS server: market.oyklane.com.
+# HTTPS comes from the shared proxy (~/apps/proxy), which reaches it as
+# "oyklane-market" on the "web" network.
+# Run from the repo root:  docker compose -f deploy/docker-compose.prod.yml up -d --build
+name: oyklane-market
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_ADMIN_ORIGIN: https://store.oyklane.com
+        API_INTERNAL_URL: https://api.oyklane.com
+    environment:
+      API_INTERNAL_URL: https://api.oyklane.com
+    restart: unless-stopped
+    networks:
+      web: { aliases: [oyklane-market] }
+networks:
+  web: { external: true }
